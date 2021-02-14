@@ -1,7 +1,9 @@
+drop table weather.all_observations;
+
 CREATE TABLE weather.all_observations (
  stationID varchar(20),
  tz varchar(30),
- obsTimeUtc timestamp,
+ obsTimeUtc varchar(30),
  obsTimeLocal timestamp,
  epoch int,
  lat float,
@@ -13,13 +15,12 @@ CREATE TABLE weather.all_observations (
  humidityLow float,
  humidityAvg  float,
  qcStatus  float,
-
  tempHigh  float,
  tempLow float,
 tempAvg  float,
 windspeedHigh   float,
 windspeedLow   float,
-windspeedAvg, float,
+windspeedAvg float,
 windgustHigh  float,
 windgustLow  float,
 windgustAvg  float,
@@ -36,6 +37,6 @@ pressureMax  float,
 pressureMin   float,
 pressureTrend   varchar(30),
 precipRate  float,
-precipTotal  float
-PRIMARY KEY (stationID, obsTimeUtc)
+precipTotal  float,
+PRIMARY KEY (stationID, obsTimeLocal)
 )

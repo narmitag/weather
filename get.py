@@ -26,7 +26,7 @@ def get_data_file(filetype, day, month, year):
 
 
 def get_data(day, month, year):
-    print(f'... processing {day}')
+    print(f'... downloading {day}')
     get_data_file('all', day, month, year)
     get_data_file('hourly', day, month, year)
     get_data_file('daily', day, month, year)
