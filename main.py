@@ -28,10 +28,9 @@ def process_data_file(filetype, day, month,year):
 
     for ob in data['observations']:
         print(ob)
-
         mycursor = mydb.cursor()
-
         tablename = f'{filetype}_observations'
+        print(tablename)
         sql = f"REPLACE INTO {tablename}   " \
               f"VALUES (%s, %s, %s,%s, %s, %s,%s, %s, %s, %s," \
               f"%s, %s, %s,%s, %s, %s,%s, %s, %s, %s," \
@@ -75,9 +74,7 @@ def process_data_file(filetype, day, month,year):
                 ob['metric']['precipRate'],
                 ob['metric']['precipTotal'])
 
-
         mycursor.execute(sql, val)
-
         mydb.commit()
 
 

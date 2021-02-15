@@ -4,7 +4,7 @@ CREATE TABLE weather.hourly_observations (
  stationID varchar(20),
  tz varchar(30),
  obsTimeUtc varchar(30),
- obsTimeLocal timestamp,
+ obsTimeLocal datetime,
  epoch int,
  lat float,
  lon float,
