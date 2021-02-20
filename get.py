@@ -3,6 +3,8 @@ import os.path
 import datetime
 import time
 
+#from load import process_data_file
+
 
 def get_data_file(filetype, day, month, year):
 
@@ -23,6 +25,7 @@ def get_data_file(filetype, day, month, year):
         with urllib.request.urlopen(wgurl) as url:
             with open(filename, "w") as text_file:
                 text_file.write(url.read().decode())
+        process_data_file(filetype, day, month, year)
 
 
 def get_data(day, month, year):
