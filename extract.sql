@@ -1,14 +1,14 @@
-SELECT * INTO OUTFILE 'all.csv'
+SELECT * INTO OUTFILE '/tmp/all.csv'
     FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
     LINES TERMINATED BY '\n'
 FROM all_observations;
 
-SELECT * INTO OUTFILE 'hourly.csv'
+SELECT * INTO OUTFILE '/tmp/hourly.csv'
     FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
     LINES TERMINATED BY '\n'
 FROM hourly_observations;
 
-SELECT * INTO OUTFILE 'daily.csv'
+SELECT * INTO OUTFILE '/tmpdaily.csv'
     FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
     LINES TERMINATED BY '\n'
 FROM daily_observations;
