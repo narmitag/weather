@@ -2,7 +2,7 @@ import datetime
 from get import get_data
 
 if __name__ == '__main__':
-    start_date = datetime.datetime(2019, 1, 18)
+    start_date = datetime.datetime(2021, 1, 18)
     today = datetime.datetime.today()
     delta = today - start_date
     # Don't download today
