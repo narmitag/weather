@@ -79,7 +79,9 @@ def process_data_file(filetype, day, month,year):
 
 def get_data_file(filetype, day, month, year):
 
-    apiKey = '15621335427e418ea21335427e118ec6'
+
+    apiKey  = os.getenv('API_KEY')
+    #apiKey = '15621335427e418ea21335427e118ec6'
     station = 'ISTGBUCH2'
     wgurl = f'https://api.weather.com/v2/pws/history/{filetype}?stationId={station}&format=json&units=m&apiKey={apiKey}&date={day}'
     filename = f'data/{filetype}/{year}/{month}/{day}.json'
