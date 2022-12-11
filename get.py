@@ -92,12 +92,13 @@ def get_data_file(filetype, day, month, year):
     if os.path.isfile(filename):
         print(f'.....already got file for {filetype}/{day}')
     else:
-        print(f'.....downloading file for {filetype}/{day}')
-        time.sleep(5)
-        with urllib.request.urlopen(wgurl) as url:
-            with open(filename, "w") as text_file:
-                text_file.write(url.read().decode())
-        process_data_file(filetype, day, month, year)
+        # print(f'.....downloading file for {filetype}/{day}')
+        # time.sleep(5)
+        # with urllib.request.urlopen(wgurl) as url:
+        #     with open(filename, "w") as text_file:
+        #         text_file.write(url.read().decode())
+        # process_data_file(filetype, day, month, year)
+        print("Skipping download")
 
 
 def get_data(day, month, year):
