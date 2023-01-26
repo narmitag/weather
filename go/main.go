@@ -91,26 +91,42 @@ func find_temp(observations Observations,
 func main() {
 
 	var observations Observations
-	var highest_temp int = -99
-	var lowest_temp int = 99
+	var highest_temp int
+	var lowest_temp int
 
-	err := filepath.Walk("../data/hourly",
-		func(path string, info os.FileInfo, err error) error {
+	years := []int{2019, 2020, 2021, 2022}
+	months := []string{"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"}
+
+	for _, year := range years {
+
+		println("")
+		println("Year : " + strconv.Itoa(year))
+		println("----------------------------")
+		for _, month := range months {
+			highest_temp = -99
+			lowest_temp = 99
+
+			println("")
+			println("+ Month : " + month)
+			err := filepath.Walk("../data/hourly/"+strconv.Itoa(year)+"/"+month,
+				func(path string, info os.FileInfo, err error) error {
+					if err != nil {
+						return err
+					}
+					//fmt.Println(path)
+					if filepath.Ext(path) == ".json" {
+
+						observations = process_file(path)
+						lowest_temp, highest_temp = find_temp(observations, lowest_temp, highest_temp)
+
+					}
+					return nil
+				})
 			if err != nil {
-				return err
+				log.Println(err)
 			}
-			//fmt.Println(path)
-			if filepath.Ext(path) == ".json" {
-
-				observations = process_file(path)
-				lowest_temp, highest_temp = find_temp(observations, lowest_temp, highest_temp)
-
-			}
-			return nil
-		})
-	if err != nil {
-		log.Println(err)
+			println("  Highest Temp = " + strconv.Itoa(highest_temp))
+			println("  Lowest Temp  = " + strconv.Itoa(lowest_temp))
+		}
 	}
-	println("Highest Temp = " + strconv.Itoa(highest_temp))
-	println("Lowest Temp = " + strconv.Itoa(lowest_temp))
 }
