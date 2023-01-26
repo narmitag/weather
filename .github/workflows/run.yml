@@ -40,3 +40,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main  
+
+      - name: run data check
+        run: |
+          go/main
