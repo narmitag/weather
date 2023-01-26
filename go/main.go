@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -56,27 +58,68 @@ type Metric struct {
 	PrecipTotal   float32 `json:"precipTotal"`
 }
 
-func main() {
-	fmt.Println("Hello World")
-	// Open our jsonFile
-	var filename string = "20190123.json"
+func process_file(filename string) Observations {
 	jsonFile, err := os.Open(filename)
-	// if we os.Open returns an error then handle it
+
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Successfully Opened " + filename)
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	var observations Observations
 	json.Unmarshal(byteValue, &observations)
 
-	for i := 0; i < len(observations.Observations); i++ {
-		fmt.Println("Time        : " + observations.Observations[i].ObsTimeUtc)
-		fmt.Println("Average Temp: " + strconv.Itoa(observations.Observations[i].Metric.TempAvg))
-		fmt.Println("Low Temp    : " + strconv.Itoa(observations.Observations[i].Metric.TempLow))
-		fmt.Println("High Temp   : " + strconv.Itoa(observations.Observations[i].Metric.TempHigh))
-	}
+	return observations
+}
 
+func find_temp(observations Observations) (int, int) {
+	var highest int = -99
+	var lowest int = 99
+
+	for i := 0; i < len(observations.Observations); i++ {
+		if observations.Observations[i].Metric.TempHigh > highest {
+			highest = observations.Observations[i].Metric.TempHigh
+		}
+		if observations.Observations[i].Metric.TempLow < lowest {
+			lowest = observations.Observations[i].Metric.TempLow
+		}
+	}
+	return lowest, highest
+}
+
+func main() {
+
+	var observations Observations
+	var highest_temp int
+	var lowest_temp int
+	var file_lowest int
+	var file_highest int
+
+	err := filepath.Walk("../data",
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			// fmt.Println(path)
+			if filepath.Ext(path) == ".json" {
+
+				observations = process_file(path)
+
+				file_lowest, file_highest = find_temp(observations)
+				if file_highest > highest_temp {
+					highest_temp = file_highest
+				}
+				if file_lowest < lowest_temp {
+					lowest_temp = file_lowest
+				}
+
+			}
+			return nil
+		})
+	if err != nil {
+		log.Println(err)
+	}
+	println("Highest Temp = " + strconv.Itoa(highest_temp))
+	println("Lowest Temp = " + strconv.Itoa(lowest_temp))
 }
