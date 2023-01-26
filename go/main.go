@@ -74,8 +74,8 @@ func process_file(filename string) Observations {
 }
 
 func find_temp(observations Observations,
-	highest int,
-	lowest int) (int, int) {
+	lowest int,
+	highest int) (int, int) {
 
 	for i := 0; i < len(observations.Observations); i++ {
 		if observations.Observations[i].Metric.TempHigh > highest {
@@ -94,16 +94,15 @@ func main() {
 	var highest_temp int = -99
 	var lowest_temp int = 99
 
-	err := filepath.Walk("../data",
+	err := filepath.Walk("../data/hourly",
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
-			// fmt.Println(path)
+			//fmt.Println(path)
 			if filepath.Ext(path) == ".json" {
 
 				observations = process_file(path)
-
 				lowest_temp, highest_temp = find_temp(observations, lowest_temp, highest_temp)
 
 			}
