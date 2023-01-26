@@ -73,9 +73,9 @@ func process_file(filename string) Observations {
 	return observations
 }
 
-func find_temp(observations Observations) (int, int) {
-	var highest int = -99
-	var lowest int = 99
+func find_temp(observations Observations,
+	highest int,
+	lowest int) (int, int) {
 
 	for i := 0; i < len(observations.Observations); i++ {
 		if observations.Observations[i].Metric.TempHigh > highest {
@@ -91,10 +91,8 @@ func find_temp(observations Observations) (int, int) {
 func main() {
 
 	var observations Observations
-	var highest_temp int
-	var lowest_temp int
-	var file_lowest int
-	var file_highest int
+	var highest_temp int = -99
+	var lowest_temp int = 99
 
 	err := filepath.Walk("../data",
 		func(path string, info os.FileInfo, err error) error {
@@ -106,13 +104,7 @@ func main() {
 
 				observations = process_file(path)
 
-				file_lowest, file_highest = find_temp(observations)
-				if file_highest > highest_temp {
-					highest_temp = file_highest
-				}
-				if file_lowest < lowest_temp {
-					lowest_temp = file_lowest
-				}
+				lowest_temp, highest_temp = find_temp(observations, lowest_temp, highest_temp)
 
 			}
 			return nil
