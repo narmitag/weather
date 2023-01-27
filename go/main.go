@@ -5,9 +5,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
+	"github.com/go-echarts/go-echarts/v2/types"
 )
 
 type Observations struct {
@@ -88,7 +93,7 @@ func find_temp(observations Observations,
 	return lowest, highest
 }
 
-func main() {
+func httpserver(w http.ResponseWriter, _ *http.Request) {
 
 	var observations Observations
 	var highest_temp int
@@ -96,6 +101,10 @@ func main() {
 
 	var highest_temp_year int
 	var lowest_temp_year int
+
+	low_line := make([]opts.LineData, 0)
+	high_line := make([]opts.LineData, 0)
+	var xaxis []string
 
 	years := []int{2019, 2020, 2021, 2022}
 	months := []string{"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"}
@@ -114,7 +123,9 @@ func main() {
 
 			println("")
 			println("+ Month : " + month)
-			err := filepath.Walk("../data/all/"+strconv.Itoa(year)+"/"+month,
+
+			xaxis = append(xaxis, strconv.Itoa(year)+month)
+			err := filepath.Walk("../data/hourly/"+strconv.Itoa(year)+"/"+month,
 				func(path string, info os.FileInfo, err error) error {
 					if err != nil {
 						return err
@@ -133,6 +144,10 @@ func main() {
 			}
 			println("  Highest Temp = " + strconv.Itoa(highest_temp))
 			println("  Lowest Temp  = " + strconv.Itoa(lowest_temp))
+
+			low_line = append(low_line, opts.LineData{Value: lowest_temp})
+			high_line = append(high_line, opts.LineData{Value: highest_temp})
+
 			if lowest_temp < lowest_temp_year {
 				lowest_temp_year = lowest_temp
 			}
@@ -147,4 +162,23 @@ func main() {
 		println("   Lowest Temp  = " + strconv.Itoa(lowest_temp_year))
 
 	}
+	line := charts.NewLine()
+	// set some global options like Title/Legend/ToolTip or anything else
+	line.SetGlobalOptions(
+		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
+		charts.WithTitleOpts(opts.Title{
+			Title: "High and Low Daily Temp",
+		}))
+
+	// Put data into instance
+	line.SetXAxis(xaxis).
+		AddSeries("Lowest Temp", low_line).
+		AddSeries("Highest Temp", high_line).
+		SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: true}))
+	line.Render(w)
+}
+
+func main() {
+	http.HandleFunc("/", httpserver)
+	http.ListenAndServe(":8081", nil)
 }
