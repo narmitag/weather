@@ -94,6 +94,9 @@ func main() {
 	var highest_temp int
 	var lowest_temp int
 
+	var highest_temp_year int
+	var lowest_temp_year int
+
 	years := []int{2019, 2020, 2021, 2022}
 	months := []string{"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"}
 
@@ -102,13 +105,16 @@ func main() {
 		println("")
 		println("Year : " + strconv.Itoa(year))
 		println("----------------------------")
+		lowest_temp_year = 99
+		highest_temp_year = -99
+
 		for _, month := range months {
 			highest_temp = -99
 			lowest_temp = 99
 
 			println("")
 			println("+ Month : " + month)
-			err := filepath.Walk("../data/hourly/"+strconv.Itoa(year)+"/"+month,
+			err := filepath.Walk("../data/all/"+strconv.Itoa(year)+"/"+month,
 				func(path string, info os.FileInfo, err error) error {
 					if err != nil {
 						return err
@@ -127,6 +133,18 @@ func main() {
 			}
 			println("  Highest Temp = " + strconv.Itoa(highest_temp))
 			println("  Lowest Temp  = " + strconv.Itoa(lowest_temp))
+			if lowest_temp < lowest_temp_year {
+				lowest_temp_year = lowest_temp
+			}
+			if highest_temp > highest_temp_year {
+				highest_temp_year = highest_temp
+			}
 		}
+
+		println("")
+		println("++ Summary for " + strconv.Itoa(year))
+		println("   Highest Temp = " + strconv.Itoa(highest_temp_year))
+		println("   Lowest Temp  = " + strconv.Itoa(lowest_temp_year))
+
 	}
 }
