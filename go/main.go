@@ -44,12 +44,12 @@ type Metric struct {
 	TempHigh      int     `json:"tempHigh"`
 	TempLow       int     `json:"tempLow"`
 	TempAvg       int     `json:"tempAvg"`
-	WindspeedHigh float32 `json:"windspeedHigh"`
-	WindspeedLow  float32 `json:"windspeedLow"`
-	WindspeedAvg  float32 `json:"windspeedAvg"`
-	WindgustHigh  float32 `json:"windgustHigh"`
-	WindgustLow   float32 `json:"windgustLow"`
-	WindgustAvg   float32 `json:"windgustAvg"`
+	WindspeedHigh int     `json:"windspeedHigh"`
+	WindspeedLow  int     `json:"windspeedLow"`
+	WindspeedAvg  int     `json:"windspeedAvg"`
+	WindgustHigh  int     `json:"windgustHigh"`
+	WindgustLow   int     `json:"windgustLow"`
+	WindgustAvg   int     `json:"windgustAvg"`
 	DewptHigh     float32 `json:"dewptHigh"`
 	DewptLow      float32 `json:"dewptLow"`
 	DewptAvg      float32 `json:"dewptAvg"`
@@ -62,8 +62,8 @@ type Metric struct {
 	PressureMax   float32 `json:"pressureMax"`
 	PressureMin   float32 `json:"pressureMin"`
 	PressureTrend float32 `json:"pressureTrend"`
-	PrecipRate    float32 `json:"precipRate"`
-	PrecipTotal   float32 `json:"precipTotal"`
+	PrecipRate    float64 `json:"precipRate"`
+	PrecipTotal   float64 `json:"precipTotal"`
 }
 
 func fileNameWithoutExtension(fileName string) string {
@@ -113,7 +113,16 @@ func find_data(observations Observations,
 		}
 		row := []string{observations.Observations[i].ObsTimeUtc,
 			strconv.Itoa(observations.Observations[i].Metric.TempLow),
-			strconv.Itoa(observations.Observations[i].Metric.TempHigh)}
+			strconv.Itoa(observations.Observations[i].Metric.TempHigh),
+			strconv.Itoa(observations.Observations[i].Metric.WindspeedHigh),
+			strconv.Itoa(observations.Observations[i].Metric.WindspeedLow),
+			strconv.Itoa(observations.Observations[i].Metric.WindspeedAvg),
+			strconv.Itoa(observations.Observations[i].Metric.WindgustHigh),
+			strconv.Itoa(observations.Observations[i].Metric.WindgustLow),
+			strconv.Itoa(observations.Observations[i].Metric.WindgustAvg),
+			strconv.FormatFloat(observations.Observations[i].Metric.PrecipRate, 'E', -1, 32),
+			strconv.FormatFloat(observations.Observations[i].Metric.PrecipTotal, 'E', -1, 32),
+		}
 		if err := w.Write(row); err != nil {
 			log.Fatalln("error writing record to file", err)
 		}
@@ -206,7 +215,8 @@ func extract_data() {
 
 	years := []int{2019, 2020, 2021, 2022}
 	months := []string{"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"}
-	headers := []string{"Timestamp", "tempLow", "tempHigh"}
+	headers := []string{"Timestamp", "tempLow", "tempHigh", "WindspeedHigh", "WindspeedLow",
+		"WindspeedAvg", "WindgustHigh", "WindgustLow", "WindgustAvg", "PrecipRate", "PrecipTotal"}
 	csvFile, err := os.Create("data.csv")
 
 	if err != nil {
