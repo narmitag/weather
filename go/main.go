@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
@@ -61,6 +62,10 @@ type Metric struct {
 	PressureTrend float32 `json:"pressureTrend"`
 	PrecipRate    float32 `json:"precipRate"`
 	PrecipTotal   float32 `json:"precipTotal"`
+}
+
+func fileNameWithoutExtension(fileName string) string {
+	return strings.TrimSuffix(fileName, filepath.Ext(fileName))
 }
 
 func process_file(filename string) Observations {
@@ -124,7 +129,7 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 			println("")
 			println("+ Month : " + month)
 
-			xaxis = append(xaxis, strconv.Itoa(year)+month)
+			//xaxis = append(xaxis, strconv.Itoa(year)+month)
 			err := filepath.Walk("../data/hourly/"+strconv.Itoa(year)+"/"+month,
 				func(path string, info os.FileInfo, err error) error {
 					if err != nil {
@@ -135,6 +140,11 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 
 						observations = process_file(path)
 						lowest_temp, highest_temp = find_temp(observations, lowest_temp, highest_temp)
+						if lowest_temp != 99 {
+							low_line = append(low_line, opts.LineData{Value: lowest_temp})
+							high_line = append(high_line, opts.LineData{Value: highest_temp})
+							xaxis = append(xaxis, fileNameWithoutExtension(filepath.Base(path)))
+						}
 
 					}
 					return nil
@@ -145,8 +155,8 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 			println("  Highest Temp = " + strconv.Itoa(highest_temp))
 			println("  Lowest Temp  = " + strconv.Itoa(lowest_temp))
 
-			low_line = append(low_line, opts.LineData{Value: lowest_temp})
-			high_line = append(high_line, opts.LineData{Value: highest_temp})
+			// low_line = append(low_line, opts.LineData{Value: lowest_temp})
+			// high_line = append(high_line, opts.LineData{Value: highest_temp})
 
 			if lowest_temp < lowest_temp_year {
 				lowest_temp_year = lowest_temp
