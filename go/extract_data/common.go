@@ -1,4 +1,4 @@
-package main
+package extract_data
 
 import (
 	"encoding/json"
@@ -29,8 +29,8 @@ func process_file(filename string) Observations {
 }
 
 func find_temp(observations Observations,
-	lowest int,
-	highest int) (int, int) {
+	lowest float64,
+	highest float64) (float64, float64) {
 
 	for i := 0; i < len(observations.Observations); i++ {
 		if observations.Observations[i].Metric.TempHigh > highest {

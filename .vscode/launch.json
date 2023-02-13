@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "/Users/neilarmitage/code/weather/go/main.go",
+            "program": "${workspaceFolder}/go/main.go",
             "args": ["--http=false"]
         }
     ]

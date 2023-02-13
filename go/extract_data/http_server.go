@@ -1,4 +1,4 @@
-package main
+package extract_data
 
 import (
 	"log"
@@ -12,14 +12,14 @@ import (
 	"github.com/go-echarts/go-echarts/v2/types"
 )
 
-func httpserver(w http.ResponseWriter, _ *http.Request) {
+func Httpserver(w http.ResponseWriter, _ *http.Request) {
 
 	var observations Observations
-	var highest_temp int
-	var lowest_temp int
+	var highest_temp float64
+	var lowest_temp float64
 
-	var highest_temp_year int
-	var lowest_temp_year int
+	var highest_temp_year float64
+	var lowest_temp_year float64
 
 	low_line := make([]opts.LineData, 0)
 	high_line := make([]opts.LineData, 0)
@@ -38,7 +38,7 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 			lowest_temp = 99
 
 			//xaxis = append(xaxis, strconv.Itoa(year)+month)
-			err := filepath.Walk("../data/hourly/"+strconv.Itoa(year)+"/"+month,
+			err := filepath.Walk("../data/ISTGBUCH2/hourly/"+strconv.Itoa(year)+"/"+month,
 				func(path string, info os.FileInfo, err error) error {
 					if err != nil {
 						return err
