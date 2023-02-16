@@ -57,7 +57,7 @@ type Metric struct {
 	PrecipTotal   float64 `json:"precipTotal"`
 }
 
-func ExtractData() {
+func ExtractData(dataPath string) {
 
 	var observations Observations
 	var highest_temp float64
@@ -95,8 +95,8 @@ func ExtractData() {
 
 			println("")
 			println("+ Month : " + month)
-
-			err := filepath.Walk("../data/ISTGBUCH2/hourly/"+strconv.Itoa(year)+"/"+month,
+			//data/ISTGBUCH2/hourly
+			err := filepath.Walk(dataPath+"/"+strconv.Itoa(year)+"/"+month,
 				func(path string, info os.FileInfo, err error) error {
 					if err != nil {
 						return err
